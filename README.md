@@ -28,6 +28,7 @@ Among these extensions are [conditionals](https://markojs.com/docs/conditionals-
 Marko supports both single-file components and components broken into separate files.
 
 ## Single file component
+
 The following single-file component renders a button and a counter with the
 number of times the button has been clicked.
 
@@ -84,7 +85,8 @@ component style:
 ```js
 module.exports = {
   onCreate() {
-    this.state = { count: 0 };},
+    this.state = { count: 0 };
+  },
   increment() {
     this.state.count++;
   }
