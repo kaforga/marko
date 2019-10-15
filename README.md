@@ -19,7 +19,6 @@
 </p>
 
 # Intro
-
 Marko is HTML _re-imagined_ as a language for building dynamic and reactive user interfaces.
 Just about any valid HTML is valid Marko, but Marko extends the HTML language to allow
 building modern applications in a declarative way.
