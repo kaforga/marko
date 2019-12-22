@@ -72,6 +72,10 @@ var proto = (AsyncVDOMBuilder.prototype = {
         return childCount === 0 ? this : child;
     },
 
+    c: function(componentDef) {
+        this.___assignedComponentDef = componentDef;
+    },
+
     element: function(tagName, attrs, key, childCount, flags, props) {
         var element = new VElement(
             tagName,

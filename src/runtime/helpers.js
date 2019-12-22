@@ -1,10 +1,6 @@
 "use strict";
 var complain = "MARKO_DEBUG" && require("complain");
 var removeDashes = require("../compiler/util/removeDashes");
-var ComponentsContext = require("./components/ComponentsContext");
-var beginComponent = require("./components/beginComponent");
-var endComponent = require("./components/endComponent");
-var getComponentsContext = ComponentsContext.___getComponentsContext;
 var w10NOOP = require("warp10/constants").NOOP;
 var isArray = Array.isArray;
 var RENDER_BODY_TO_JSON = function() {
@@ -80,6 +76,43 @@ function resolveRenderer(handler) {
     return createDeferredRenderer(handler);
 }
 
+function execRenderBody(renderBody, key, out, attrs, args) {
+    var assignedComponentDef = out.___assignedComponentDef;
+    var isW10NOOP = renderBody === w10NOOP;
+    var compFlags = 0;
+    var component;
+
+    if (assignedComponentDef) {
+        component = assignedComponentDef.___component;
+        compFlags = assignedComponentDef.___flags;
+    }
+
+    out.___beginFragment(
+        key,
+        component,
+        IS_SERVER
+            ? compFlags & FLAG_WILL_RERENDER_IN_BROWSER
+            : isW10NOOP
+    );
+
+    if (!isW10NOOP) {
+        var assignedKey = out.___assignedKey;
+        var assignedCustomEvents = out.___assignedCustomEvents;
+
+        if (args) {
+            renderBody.apply(null, [out].concat(args, attrs));
+        } else {
+            renderBody(out, attrs);
+        }
+
+        out.___assignedKey = assignedKey;
+        out.___assignedCustomEvents = assignedCustomEvents;
+        out.___assignedComponentDef = assignedComponentDef;
+    }
+
+    out.___endFragment();
+}
+
 var helpers = {
     /**
      * Internal helper method to prevent null/undefined from being written out
@@ -139,13 +172,14 @@ var helpers = {
         renderBody,
         args,
         props,
-        componentDef,
         key,
         customEvents
     ) {
+        var componentDef = out.___assignedComponentDef;
+        var component = componentDef && componentDef.___component;
+
         if (tag) {
             var attrs = getAttrs && getAttrs();
-            var component = componentDef && componentDef.___component;
             if (typeof tag === "string") {
                 if (customEvents) {
                     if (!props) {
@@ -216,52 +250,15 @@ var helpers = {
                     }
 
                     if (isFn) {
-                        var flags = componentDef ? componentDef.___flags : 0;
-                        var willRerender =
-                            flags & FLAG_WILL_RERENDER_IN_BROWSER;
-                        var isW10NOOP = render === w10NOOP;
-                        var preserve = IS_SERVER ? willRerender : isW10NOOP;
-                        var componentsContext = getComponentsContext(out);
-                        var parentComponentDef =
-                            componentsContext.___componentDef;
-
-                        // TODO: forward preserve
-                        beginComponent(
-                            componentsContext,
-                            component,
-                            key,
-                            customEvents,
-                            parentComponentDef,
-                            false,
-                            true
-                        );
-                        if (!isW10NOOP) {
-                            render.toJSON = RENDER_BODY_TO_JSON;
-                            if (args) {
-                                render.apply(null, [out].concat(args, attrs));
-                            } else {
-                                render(out, attrs);
-                            }
-                        }
-
-                        endComponent(out, componentsContext.___componentDef);
-                        componentsContext.___componentDef = parentComponentDef;
+                        render.toJSON = RENDER_BODY_TO_JSON;
+                        execRenderBody(render, key, out, attrs, args);
                     } else {
                         out.error("Invalid dynamic tag value");
                     }
                 }
             }
         } else if (renderBody) {
-            var compFlags = componentDef ? componentDef.___flags : 0;
-            out.___beginFragment(
-                key,
-                component,
-                IS_SERVER
-                    ? compFlags & FLAG_WILL_RERENDER_IN_BROWSER
-                    : render === w10NOOP
-            );
-            renderBody(out);
-            out.___endFragment();
+            execRenderBody(renderBody, key, out);
         }
     },
 

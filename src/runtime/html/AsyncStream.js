@@ -477,6 +477,10 @@ var proto = (AsyncStream.prototype = {
         return newOut;
     },
 
+    c: function(componentDef) {
+        this.___assignedComponentDef = componentDef;
+    },
+
     element: function(tagName, elementAttrs, openTagOnly) {
         var str = "<" + tagName + attrsHelper(elementAttrs) + ">";
 

@@ -744,10 +744,8 @@ class CustomTag extends HtmlElement {
 
             let hasBody = body && body.length;
 
-            if (hasBody && context.outputType === "vdom") {
-                // TODO
+            if (hasBody) {
                 body.unshift(builder.expression("out.c(__component)"));
-                debugger;
             }
 
             if (

@@ -183,7 +183,7 @@ function createRendererFunc(templateRenderFunc, componentProps) {
             }
         }
 
-        endComponent(out, componentDef);
+        endComponent(out, componentDef, parentComponentDef);
         componentsContext.___componentDef = parentComponentDef;
         componentsContext.___legacyComponentDef = parentLegacyComponentDef;
     };

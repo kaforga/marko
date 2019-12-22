@@ -73,12 +73,12 @@ function indexServerComponentBoundaries(node, runtimeId, stack) {
                                 keyedElementsByComponentId[ownerId] ||
                                 (keyedElementsByComponentId[ownerId] = {});
                         }
-                        addComponentRootToKeyedElements(
-                            keyedElements,
-                            key,
-                            rootNode,
-                            componentId
-                        );
+                        // addComponentRootToKeyedElements(
+                        //     keyedElements,
+                        //     key,
+                        //     rootNode,
+                        //     componentId
+                        // );
                     }
 
                     serverComponentRootNodes[componentId] = rootNode;

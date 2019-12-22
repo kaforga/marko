@@ -228,7 +228,7 @@ function createRendererFunc(
             component.___rawState
         );
 
-        endComponent(out, componentDef);
+        endComponent(out, componentDef, parentComponentDef);
         componentsContext.___componentDef = parentComponentDef;
     };
 }
