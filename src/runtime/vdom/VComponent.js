@@ -1,11 +1,10 @@
 var VNode = require("./VNode");
 var inherit = require("raptor-util/inherit");
 
-function VComponent(component, key, ownerComponent, preserve) {
+function VComponent(component, key, preserve) {
     this.___VNode(null /* childCount */);
     this.___key = key;
     this.___component = component;
-    this.___ownerComponent = ownerComponent;
     this.___preserve = preserve;
 }
 

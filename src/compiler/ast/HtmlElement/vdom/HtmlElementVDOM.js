@@ -11,7 +11,6 @@ let CREATE_ARGS_COUNT = 0;
 const INDEX_TAG_NAME = CREATE_ARGS_COUNT++;
 const INDEX_ATTRS = CREATE_ARGS_COUNT++;
 const INDEX_KEY = CREATE_ARGS_COUNT++;
-const INDEX_COMPONENT = CREATE_ARGS_COUNT++;
 const INDEX_CHILD_COUNT = CREATE_ARGS_COUNT++;
 const INDEX_FLAGS = CREATE_ARGS_COUNT++;
 const INDEX_PROPS = CREATE_ARGS_COUNT++;
@@ -235,10 +234,6 @@ class HtmlElementVDOM extends Node {
             (!this.isAutoKeyed || !this.isStatic || this.createElementId)
         ) {
             createArgs[INDEX_KEY] = key;
-
-            if (!this.isStatic) {
-                createArgs[INDEX_COMPONENT] = builder.identifier("component");
-            }
         }
 
         if (childCount != null) {

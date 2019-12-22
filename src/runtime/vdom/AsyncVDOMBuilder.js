@@ -57,18 +57,14 @@ var proto = (AsyncVDOMBuilder.prototype = {
     ___isOut: true,
     ___document: defaultDocument,
 
-    bc: function(component, key, ownerComponent) {
-        var vComponent = new VComponent(component, key, ownerComponent);
-        return this.___beginNode(vComponent, 0, true);
-    },
-
-    ___preserveComponent: function(component, key, ownerComponent) {
-        var vComponent = new VComponent(component, key, ownerComponent, true);
+    ___preserveComponent: function(component, key) {
+        var vComponent = new VComponent(component, key, true);
         this.___beginNode(vComponent, 0);
     },
 
     ___beginNode: function(child, childCount, pushToStack) {
-        this.___parent.___appendChild(child);
+        this.node(child);
+
         if (pushToStack === true) {
             this.___stack.push(child);
             this.___parent = child;
@@ -76,20 +72,11 @@ var proto = (AsyncVDOMBuilder.prototype = {
         return childCount === 0 ? this : child;
     },
 
-    element: function(
-        tagName,
-        attrs,
-        key,
-        component,
-        childCount,
-        flags,
-        props
-    ) {
+    element: function(tagName, attrs, key, childCount, flags, props) {
         var element = new VElement(
             tagName,
             attrs,
             key,
-            component,
             childCount,
             flags,
             props
@@ -97,37 +84,25 @@ var proto = (AsyncVDOMBuilder.prototype = {
         return this.___beginNode(element, childCount);
     },
 
-    ___elementDynamic: function(
-        tagName,
-        attrs,
-        key,
-        component,
-        childCount,
-        flags,
-        props
-    ) {
+    ___elementDynamic: function(tagName, attrs, key, childCount, flags, props) {
         return this.element(
             tagName,
             attrsHelper(attrs),
             key,
-            component,
             childCount,
             flags,
             props
         );
     },
 
-    n: function(node, component) {
+    n: function(node) {
         // NOTE: We do a shallow clone since we assume the node is being reused
         //       and a node can only have one parent node.
-        var clone = node.___cloneNode();
-        this.node(clone);
-        clone.___ownerComponent = component;
-
-        return this;
+        return this.node(node.___cloneNode());
     },
 
     node: function(node) {
+        node.___ownerComponent = this.___assignedComponentDef.___component;
         this.___parent.___appendChild(node);
         return this;
     },
@@ -147,8 +122,7 @@ var proto = (AsyncVDOMBuilder.prototype = {
             text = text.toString();
         }
 
-        this.___parent.___appendChild(new VText(text));
-        return this;
+        return this.node(new VText(text));
     },
 
     comment: function(comment) {
@@ -164,20 +138,11 @@ var proto = (AsyncVDOMBuilder.prototype = {
         return this;
     },
 
-    beginElement: function(
-        tagName,
-        attrs,
-        key,
-        component,
-        childCount,
-        flags,
-        props
-    ) {
+    beginElement: function(tagName, attrs, key, childCount, flags, props) {
         var element = new VElement(
             tagName,
             attrs,
             key,
-            component,
             childCount,
             flags,
             props
@@ -190,7 +155,6 @@ var proto = (AsyncVDOMBuilder.prototype = {
         tagName,
         attrs,
         key,
-        component,
         childCount,
         flags,
         props
@@ -199,15 +163,14 @@ var proto = (AsyncVDOMBuilder.prototype = {
             tagName,
             attrsHelper(attrs),
             key,
-            component,
             childCount,
             flags,
             props
         );
     },
 
-    ___beginFragment: function(key, component, preserve) {
-        var fragment = new VFragment(key, component, preserve);
+    ___beginFragment: function(key, preserve) {
+        var fragment = new VFragment(key, preserve);
         this.___beginNode(fragment, null, true);
         return this;
     },
@@ -466,13 +429,7 @@ var proto = (AsyncVDOMBuilder.prototype = {
         return this.then(undefined, fnErr);
     },
 
-    isVDOM: true,
-
-    c: function(componentDef, key, customEvents) {
-        this.___assignedComponentDef = componentDef;
-        this.___assignedKey = key;
-        this.___assignedCustomEvents = customEvents;
-    }
+    isVDOM: true
 });
 
 proto.e = proto.element;

@@ -9,9 +9,8 @@ VNode.prototype = {
         this.___lastChild = null;
         this.___parentNode = null;
         this.___nextSiblingInternal = null;
+        this.___internalOwnerComponent = null;
     },
-
-    ___ownerComponent: null,
 
     get ___firstChild() {
         var firstChild = this.___firstChildInternal;
@@ -44,6 +43,17 @@ VNode.prototype = {
         }
 
         return nextSibling;
+    },
+
+    get ___ownerComponent() {
+        return (
+            this.___internalOwnerComponent ||
+            (this.___parentNode && this.___parentNode.___ownerComponent)
+        );
+    },
+
+    set ___ownerComponent(component) {
+        this.___internalOwnerComponent = component;
     },
 
     ___appendChild: function(child) {

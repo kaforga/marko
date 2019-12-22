@@ -65,12 +65,7 @@ class NodeVDOM extends Node {
     writeCode(writer) {
         var builder = writer.builder;
         var funcCallArgs = [this.variableIdentifier];
-
-        if (this.isComponent) {
-            funcCallArgs.push(builder.identifier("component"));
-        }
-
-        let funcCall = builder.functionCall(
+        var funcCall = builder.functionCall(
             builder.identifier("n"),
             funcCallArgs
         );

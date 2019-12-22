@@ -11,11 +11,13 @@ module.exports = function beginComponent(
     componentsContext,
     component,
     key,
+    customEvents,
     ownerComponentDef,
     isSplitComponent,
     isImplicitComponent,
     existingComponentDef
 ) {
+    var out = componentsContext.___out;
     var globalContext = componentsContext.___globalContext;
 
     var componentId = component.id;
@@ -29,6 +31,10 @@ module.exports = function beginComponent(
             componentId,
             globalContext
         ));
+
+    out.___assignedKey = key;
+    out.___assignedComponentDef = componentDef;
+    out.___assignedCustomEvents = customEvents;
 
     // On the server
     if (
@@ -48,7 +54,6 @@ module.exports = function beginComponent(
 
     componentsContext.___components.push(componentDef);
 
-    let out = componentsContext.___out;
     let runtimeId = out.global.runtimeId;
 
     componentDef.___renderBoundary = true;

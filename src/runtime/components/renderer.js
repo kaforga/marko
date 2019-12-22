@@ -43,11 +43,9 @@ function handleBeginAsync(event) {
         );
     }
     // Carry along the component arguments
-    asyncOut.c(
-        parentOut.___assignedComponentDef,
-        parentOut.___assignedKey,
-        parentOut.___assignedCustomEvents
-    );
+    asyncOut.___assignedKey = parentOut.___assignedKey;
+    asyncOut.___assignedComponentDef = parentOut.___assignedComponentDef;
+    asyncOut.___assignedCustomEvents = parentOut.___assignedCustomEvents;
 }
 
 function handleBeginDetachedAsync(event) {
@@ -70,7 +68,7 @@ function createRendererFunc(
 
     var shouldApplySplitMixins = isSplit;
 
-    return function renderer(input, out) {
+    return function renderer(input, out, key, customEvents) {
         trackAsyncComponents(out);
 
         var componentsContext = getComponentsContext(out);
@@ -84,7 +82,6 @@ function createRendererFunc(
         var parentComponentDef = componentsContext.___componentDef;
         var ownerComponentDef = out.___assignedComponentDef;
         var ownerComponentId = ownerComponentDef && ownerComponentDef.id;
-        var key = out.___assignedKey;
 
         if (component) {
             // If component is provided then we are currently rendering
@@ -100,8 +97,6 @@ function createRendererFunc(
             // that were provided.
             if (parentComponentDef) {
                 // console.log('componentArgs:', componentArgs);
-                customEvents = out.___assignedCustomEvents;
-
                 if (key != null) {
                     id = resolveComponentKey(
                         key.toString(),
@@ -215,6 +210,7 @@ function createRendererFunc(
             componentsContext,
             component,
             key,
+            customEvents,
             ownerComponentDef,
             isSplit,
             isImplicitComponent

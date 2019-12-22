@@ -2,8 +2,9 @@
 var complain = "MARKO_DEBUG" && require("complain");
 var removeDashes = require("../compiler/util/removeDashes");
 var ComponentsContext = require("./components/ComponentsContext");
+var beginComponent = require("./components/beginComponent");
+var endComponent = require("./components/endComponent");
 var getComponentsContext = ComponentsContext.___getComponentsContext;
-var ComponentDef = require("./components/ComponentDef");
 var w10NOOP = require("warp10/constants").NOOP;
 var isArray = Array.isArray;
 var RENDER_BODY_TO_JSON = function() {
@@ -197,9 +198,7 @@ var helpers = {
 
                 if (tag._ || tag.renderer || tag.render) {
                     var renderer = tag._ || tag.renderer || tag.render;
-                    out.c(componentDef, key, customEvents);
                     renderer(attrs, out);
-                    out.___assignedComponentDef = null;
                 } else {
                     var render = (tag && tag.renderBody) || tag;
                     var isFn = typeof render === "function";
@@ -222,31 +221,31 @@ var helpers = {
                             flags & FLAG_WILL_RERENDER_IN_BROWSER;
                         var isW10NOOP = render === w10NOOP;
                         var preserve = IS_SERVER ? willRerender : isW10NOOP;
-                        out.___beginFragment(key, component, preserve);
-                        if (!isW10NOOP && isFn) {
-                            var componentsContext = getComponentsContext(out);
-                            var parentComponentDef =
-                                componentsContext.___componentDef;
-                            var globalContext =
-                                componentsContext.___globalContext;
-                            componentsContext.___componentDef = new ComponentDef(
-                                component,
-                                parentComponentDef.id +
-                                    "-" +
-                                    parentComponentDef.___nextKey(key),
-                                globalContext
-                            );
-                            render.toJSON = RENDER_BODY_TO_JSON;
+                        var componentsContext = getComponentsContext(out);
+                        var parentComponentDef =
+                            componentsContext.___componentDef;
 
+                        // TODO: forward preserve
+                        beginComponent(
+                            componentsContext,
+                            component,
+                            key,
+                            customEvents,
+                            parentComponentDef,
+                            false,
+                            true
+                        );
+                        if (!isW10NOOP) {
+                            render.toJSON = RENDER_BODY_TO_JSON;
                             if (args) {
                                 render.apply(null, [out].concat(args, attrs));
                             } else {
                                 render(out, attrs);
                             }
-
-                            componentsContext.___componentDef = parentComponentDef;
                         }
-                        out.___endFragment();
+
+                        endComponent(out, componentsContext.___componentDef);
+                        componentsContext.___componentDef = parentComponentDef;
                     } else {
                         out.error("Invalid dynamic tag value");
                     }
@@ -271,20 +270,8 @@ var helpers = {
      */
     t: function loadTagHelper(renderer) {
         if (renderer) {
-            renderer = resolveRenderer(renderer);
+            return resolveRenderer(renderer);
         }
-
-        return function wrappedRenderer(
-            input,
-            out,
-            componentDef,
-            key,
-            customEvents
-        ) {
-            out.c(componentDef, key, customEvents);
-            renderer(input, out);
-            out.___assignedComponentDef = null;
-        };
     },
 
     /**

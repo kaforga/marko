@@ -1,3 +1,5 @@
+var domData = require("../components/dom-data");
+var vElementByDOMNode = domData.___vElementByDOMNode;
 var VNode = require("./VNode");
 var inherit = require("raptor-util/inherit");
 
@@ -10,8 +12,9 @@ VComment.prototype = {
     ___nodeType: 8,
 
     ___actualize: function(doc) {
-        var nodeValue = this.___nodeValue;
-        return doc.createComment(nodeValue);
+        var node = doc.createComment(this.___nodeValue);
+        vElementByDOMNode.set(node, this);
+        return node;
     },
 
     ___cloneNode: function() {

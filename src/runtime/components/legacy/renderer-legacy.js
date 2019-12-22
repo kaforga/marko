@@ -36,8 +36,6 @@ function createRendererFunc(templateRenderFunc, componentProps) {
         var key = out.___assignedKey;
         var customEvents = out.___assignedCustomEvents;
 
-        out.___assignedComponentDef = null;
-
         if (component) {
             id = component.id;
             isExisting = true;
@@ -112,6 +110,7 @@ function createRendererFunc(templateRenderFunc, componentProps) {
             componentsContext,
             component,
             key,
+            customEvents,
             ownerComponentDef,
             isSplit,
             isFakeComponent
@@ -148,6 +147,7 @@ function createRendererFunc(templateRenderFunc, componentProps) {
                         componentsContext,
                         component,
                         key,
+                        customEvents,
                         ownerComponentDef,
                         isSplit,
                         false,

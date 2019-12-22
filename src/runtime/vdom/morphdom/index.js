@@ -130,7 +130,7 @@ function morphdom(fromNode, toNode, doc, componentsContext) {
 
     var detachedNodes = [];
 
-    function detachNode(node, parentNode, ownerComponent) {
+    function detachNode(node, ownerComponent) {
         if (node.nodeType === ELEMENT_NODE || node.nodeType === FRAGMENT_NODE) {
             detachedNodes.push(node);
             detachedByDOMNode.set(node, ownerComponent || true);
@@ -311,11 +311,7 @@ function morphdom(fromNode, toNode, doc, componentsContext) {
                             );
                         } else {
                             // Remove the old node
-                            detachNode(
-                                curFromNodeChild,
-                                fromNode,
-                                ownerComponent
-                            );
+                            detachNode(curFromNodeChild, ownerComponent);
 
                             // Incompatible nodes. Just move the target VNode into the DOM at this position
                             insertVirtualNodeBefore(
@@ -496,7 +492,6 @@ function morphdom(fromNode, toNode, doc, componentsContext) {
                                         if (curFromNodeChild) {
                                             detachNode(
                                                 curFromNodeChild,
-                                                fromNode,
                                                 ownerComponent
                                             );
                                         }
@@ -517,7 +512,6 @@ function morphdom(fromNode, toNode, doc, componentsContext) {
                                     if (curFromNodeChild) {
                                         detachNode(
                                             curFromNodeChild,
-                                            fromNode,
                                             ownerComponent
                                         );
                                     }
@@ -546,11 +540,7 @@ function morphdom(fromNode, toNode, doc, componentsContext) {
                                     ownerComponent,
                                     parentComponent
                                 );
-                                detachNode(
-                                    matchingFromEl,
-                                    fromNode,
-                                    ownerComponent
-                                );
+                                detachNode(matchingFromEl, ownerComponent);
                             }
                         } else {
                             // preserve the node
@@ -687,10 +677,10 @@ function morphdom(fromNode, toNode, doc, componentsContext) {
                             parentComponent.id + "-" + curFromNodeKey
                         ] === undefined
                     ) {
-                        detachNode(curFromNodeChild, fromNode, ownerComponent);
+                        detachNode(curFromNodeChild, ownerComponent);
                     }
                 } else {
-                    detachNode(curFromNodeChild, fromNode, ownerComponent);
+                    detachNode(curFromNodeChild, ownerComponent);
                 }
 
                 curFromNodeChild = fromNextSibling;
@@ -753,7 +743,7 @@ function morphdom(fromNode, toNode, doc, componentsContext) {
                         curVFromNodeChild.___ownerComponent;
                 }
 
-                detachNode(curFromNodeChild, fromNode, referenceComponent);
+                detachNode(curFromNodeChild, referenceComponent);
 
                 curFromNodeChild = fromNextSibling;
             }

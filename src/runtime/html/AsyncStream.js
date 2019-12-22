@@ -577,12 +577,6 @@ var proto = (AsyncStream.prototype = {
 
     catch: function(fnErr) {
         return this.then(undefined, fnErr);
-    },
-
-    c: function(componentDef, key, customEvents) {
-        this.___assignedComponentDef = componentDef;
-        this.___assignedKey = key;
-        this.___assignedCustomEvents = customEvents;
     }
 });
 

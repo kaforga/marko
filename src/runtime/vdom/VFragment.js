@@ -5,16 +5,16 @@ var VNode = require("./VNode");
 var inherit = require("raptor-util/inherit");
 var createFragmentNode = require("./morphdom/fragment").___createFragmentNode;
 
-function VFragment(key, ownerComponent, preserve) {
+function VFragment(key, preserve) {
     this.___VNode(null /* childCount */);
     this.___key = key;
-    this.___ownerComponent = ownerComponent;
     this.___preserve = preserve;
 }
 
 VFragment.prototype = {
     ___nodeType: 12,
     ___actualize: function() {
+        debugger;
         var fragment = createFragmentNode();
         keysByDOMNode.set(fragment, this.___key);
         vElementByDOMNode.set(fragment, this);

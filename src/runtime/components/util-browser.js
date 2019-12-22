@@ -170,7 +170,7 @@ function addComponentRootToKeyedElements(
             keyedElements[key] || {});
         repeatedElementsForKey[componentId] = rootNode;
     } else {
-        keyedElements[key] = rootNode;
+        // keyedElements[key] = rootNode;
     }
 }
 

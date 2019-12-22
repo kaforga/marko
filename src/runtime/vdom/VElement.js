@@ -73,15 +73,7 @@ function VElementClone(other) {
     this.___constId = other.___constId;
 }
 
-function VElement(
-    tagName,
-    attrs,
-    key,
-    ownerComponent,
-    childCount,
-    flags,
-    props
-) {
+function VElement(tagName, attrs, key, childCount, flags, props) {
     this.___VNode(childCount);
 
     var constId;
@@ -92,7 +84,6 @@ function VElement(
 
     this.___key = key;
     this.___flags = flags || 0;
-    this.___ownerComponent = ownerComponent;
     this.___attributes = attrs || EMPTY_OBJECT;
     this.___properties = props || EMPTY_OBJECT;
     this.___nodeName = tagName;
@@ -114,17 +105,9 @@ VElement.prototype = {
      * @param  {int|null} attrCount  The number of attributes (or `null` if not known)
      * @param  {int|null} childCount The number of child nodes (or `null` if not known)
      */
-    e: function(tagName, attrs, key, ownerComponent, childCount, flags, props) {
+    e: function(tagName, attrs, key, childCount, flags, props) {
         var child = this.___appendChild(
-            new VElement(
-                tagName,
-                attrs,
-                key,
-                ownerComponent,
-                childCount,
-                flags,
-                props
-            )
+            new VElement(tagName, attrs, key, childCount, flags, props)
         );
 
         if (childCount === 0) {
@@ -140,10 +123,8 @@ VElement.prototype = {
      *
      * @param  {String} value The value for the new Comment node
      */
-    n: function(node, ownerComponent) {
-        node = node.___cloneNode();
-        node.___ownerComponent = ownerComponent;
-        this.___appendChild(node);
+    n: function(node) {
+        this.___appendChild(node.___cloneNode());
         return this.___finishChild();
     },
 
@@ -265,7 +246,6 @@ function virtualizeElement(node, virtualizeChildNodes) {
         tagName,
         attrs,
         null /*key*/,
-        null /*ownerComponent*/,
         0 /*child count*/,
         0 /*flags*/,
         null /*props*/
