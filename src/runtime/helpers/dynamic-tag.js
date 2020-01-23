@@ -1,7 +1,6 @@
 "use strict";
 
 var complain = "MARKO_DEBUG" && require("complain");
-var removeDashes = require("../../compiler/util/removeDashes");
 var ComponentsContext = require("../components/ComponentsContext");
 var getComponentsContext = ComponentsContext.___getComponentsContext;
 var ComponentDef = require("../components/ComponentDef");
@@ -143,3 +142,9 @@ module.exports = function dynamicTag(
         out.___endFragment();
     }
 };
+
+function removeDashes(str) {
+    return str.replace(/-([a-z])/g, function(match, lower) {
+        return lower.toUpperCase();
+    });
+}
