@@ -5,7 +5,7 @@ require("../__util__/test-init");
 const fs = require("fs");
 const path = require("path");
 const marko = require("marko");
-const autotest = require("../autotest");
+const autotest = require("mocha-autotest").default;
 const domToString = require("../__util__/domToString");
 const createBrowserWithMarko = require("../__util__/create-marko-jsdom-module");
 const expect = require("chai").expect;
@@ -129,7 +129,7 @@ async function runRenderTest(fixture) {
                     ext: ".html"
                 });
 
-                fixture.context.vdom = normalizeHtml(actualNode);
+                (fixture.context || (fixture.context = {})).vdom = normalizeHtml(actualNode);
             } else {
                 let html = (await out).getOutput();
 
@@ -145,7 +145,7 @@ async function runRenderTest(fixture) {
                     });
                 }
 
-                fixture.context.html = normalizeHtml(html);
+                (fixture.context || (fixture.context = {})).html = normalizeHtml(html);
             }
 
             asyncEventsVerifier.verify();
